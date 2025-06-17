@@ -84,6 +84,9 @@ class Organizer:
 
         # Header information for the action, create main sub dir
         actions = []
+
+        if os.path.exists(main_sub_path):
+            shutil.rmtree(main_sub_path)
         print(txt_header.ljust(console_len))
         if not os.path.exists(main_sub_path):
             print(txt_main_sub_dir.ljust(console_len))

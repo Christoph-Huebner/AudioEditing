@@ -23,15 +23,15 @@ def main():
     # Dynamic range processing options
     parser_opt_org_com = parser_opt_org.add_subparsers(dest="dynamic_range_method", title="Dynamic compression method", help="Select dynamic range processing method (default: None).")
     parser_opt_org_com_dc = parser_opt_org_com.add_parser("dc", help="Dynamic compression (acompressor)")
-    parser_opt_org_com_dc.add_argument("-th, --threshold", default="-26", dest="threshold", help="Threshold (default: -26 dB)")
-    parser_opt_org_com_dc.add_argument("-rt, --ratio", type=float, default=4.0, dest="ratio", help="Compression ratio (default: 4.0)")
-    parser_opt_org_com_dc.add_argument("-at, --attack", type=int, default=30, dest="attack", help="Attack time in milliseconds (default: 30 ms)")
-    parser_opt_org_com_dc.add_argument("-re, --release", type=int, default=150, dest="release", help="Release time in milliseconds (default: 150 ms)")
+    parser_opt_org_com_dc.add_argument("-th", "--threshold", default="-26", dest="threshold", help="Threshold (default: -26 dB)")
+    parser_opt_org_com_dc.add_argument("-rt", "--ratio", type=float, default=4.0, dest="ratio", help="Compression ratio (default: 4.0)")
+    parser_opt_org_com_dc.add_argument("-at", "--attack", type=int, default=30, dest="attack", help="Attack time in milliseconds (default: 30 ms)")
+    parser_opt_org_com_dc.add_argument("-re", "--release", type=int, default=150, dest="release", help="Release time in milliseconds (default: 150 ms)")
     # Loudness normalization options
     parser_opt_org_com_ln = parser_opt_org_com.add_parser("ln", help="Loudness normalization (loudnorm)")
-    parser_opt_org_com_ln.add_argument("-lu, --lufs", type=float, default=-16.0, dest="lufs", help="Loudness in LUFS (default: -16.0)")
-    parser_opt_org_com_ln.add_argument("-tp, --true-peak", type=float, default=-1.5, dest="true_peak", help="True Peak in dB (default: -1.5)")
-    parser_opt_org_com_ln.add_argument("-lr, --loudness-range", type=float, default=11.0, dest="loudness_range", help="Loudness Range in LU (default: 11.0)")
+    parser_opt_org_com_ln.add_argument("-lu", "--lufs", type=float, default=-16.0, dest="lufs", help="Loudness in LUFS (default: -16.0)")
+    parser_opt_org_com_ln.add_argument("-tp", "--true-peak", type=float, default=-1.5, dest="true_peak", help="True Peak in dB (default: -1.5)")
+    parser_opt_org_com_ln.add_argument("-lr", "--loudness-range", type=float, default=11.0, dest="loudness_range", help="Loudness Range in LU (default: 11.0)")
 
     args = parser.parse_args()
     print(f"Selected parameters: {args}")
