@@ -227,6 +227,8 @@ In your project directory (see section 2), run with administrative privileges:
 
 ## 5. Test Run
 
+> ⚠️ **IMPORTANT:** The norm command changes the files in the folder directly. Please be careful.
+
 Execute a quick test to confirm everything works. The results shows the renaming of some audio files in simulation mode.
 
 - **Manual (no Docker)**
