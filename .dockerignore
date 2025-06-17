@@ -1,0 +1,6 @@
+.git
+.gitignore
+LICENSE
+*.md
+files
+__pycache__
