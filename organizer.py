@@ -11,12 +11,12 @@ class Organizer:
         self.__path = args.path
         self.__try_run = args.try_run
         # Normalization parameters
-        self.__prefix = args.prefix
-        self.__exclusions = args.exclusions if args.exclusions else []
+        self.__prefix = getattr(args, 'prefix', '')
+        self.__exclusions = getattr(args, 'exclusions', "").split(',')
         # Organizer specific parameters
-        self.__batch_size = args.batch_size
-        self.__random_dist = args.random_dist
-        self.__convert_2_mp3 = self.__convert_2_mp3
+        self.__batch_size = getattr(args, 'batch_size', 0)
+        self.__random_dist = getattr(args, 'random_dist', False)
+        self.__convert_2_mp3 = getattr(args, 'convert_2_mp3', False)
         self.__converter = Converter(args)
 
     def organize_files(self):
@@ -27,8 +27,8 @@ class Organizer:
         # ---------------------------------------------------------------------------------------------------
         # Preparations / Definitions
         # ---------------------------------------------------------------------------------------------------
-        main_sub_path = os.path.join(self.__path, 'tmp2')
-        sub_dir_path = os.path.join(main_sub_path, 'Liste_')
+        main_sub_path = os.path.join(self.__path, 'tmp')
+        sub_dir_path = os.path.join(main_sub_path, 'list_')
         console_len = max(len(f) for f in os.listdir(self.__path) if os.path.isfile(os.path.join(self.__path, f)))
         width_Prefix_num = 4  # 4: 0001 for example
 
@@ -126,12 +126,18 @@ class Organizer:
         Create a m3u file: that plays the tracks in the correct order in vlc or windows media player
         '''
         files = [f for f in os.listdir(self.__path) if os.path.isfile(os.path.join(self.__path, f))]
+        playlist_lines = ["#EXTM3U"] + sorted(files)
+        playlist_path = os.path.join(self.__path, '_PlayListe.m3u')
 
-        with open(os.path.join(self.__path, '_PlayListe.m3u'), 'w') as playlist:
-            playlist.write("#EXTM3U\n")
-
-            for file in sorted(files):
-                playlist.write(f"{file}\n")
+        if (self.__try_run):
+            print(f"Simulation: Create playlist file '{playlist_path}' with the following files:")
+            for file in playlist_lines:
+                print(file)
+        else:
+            with open(playlist_path, 'w') as playlist:
+                for file in playlist_lines:
+                    playlist.write(f"{file}\n")
+            print(f"Created playlist file '{playlist_path}' with {len(files) -1} files.")
 
     def norm_files(self):
         '''
@@ -142,6 +148,7 @@ class Organizer:
             cnt = 0
             max_len = max(len(f) for f in os.listdir(self.__path) if os.path.isfile(os.path.join(self.__path, f)))
             out_arr = []
+            txt_prefix_rename = "Rename: " if not self.__try_run else "[Simulation] Rename: "
 
             for file_name in os.listdir(self.__path):
                 full_path_current = os.path.join(self.__path, file_name)
@@ -151,7 +158,8 @@ class Organizer:
 
                     name_cleaned = name
                     name_cleaned = name_cleaned.replace("_", " ").replace("-", " ")
-                    name_cleaned = re.sub(re.escape(self.__prefix), "", name_cleaned, flags=re.IGNORECASE)
+                    if not self.__prefix:
+                        name_cleaned = re.sub(re.escape(self.__prefix), "", name_cleaned, flags=re.IGNORECASE)
                     for ex in self.__exclusions:
                         name_cleaned = re.sub(re.escape(ex), "", name_cleaned, flags=re.IGNORECASE)
                     #nameCleaned = nameCleaned.replace(f"_{text}", "").replace(text, "").strip("_ ")
@@ -161,13 +169,16 @@ class Organizer:
                     name_cleaned = re.sub(r'\s+', ' ', name_cleaned).strip()
                     name_cleaned = name_cleaned[0].upper() + name_cleaned[1:]
 
-                    file_name_new = f"{self.__prefix}_{name_cleaned}{ext}"
+                    if self.__prefix:
+                        file_name_new = f"{self.__prefix}_{name_cleaned}{ext}"
+                    else:
+                        file_name_new = f"{name_cleaned}{ext}"
                     full_path_new = os.path.join(self.__path, file_name_new)
 
                     if full_path_current != full_path_new:
                         if self.__try_run == False:
                             os.rename(full_path_current, full_path_new)
-                        out_arr.append((file_name.lower(), f"Rename: {file_name.ljust(max_len)} -> {file_name_new}"))
+                        out_arr.append((file_name.lower(), f"{txt_prefix_rename} {file_name.ljust(max_len)} -> {file_name_new}"))
                     else:
                         out_arr.append((file_name.lower(), f"Skip: {file_name} already correct."))
                     cnt = cnt + 1

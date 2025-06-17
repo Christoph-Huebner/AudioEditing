@@ -2,8 +2,6 @@ import argparse
 from organizer import Organizer
 
 def main():
-    #create_play_list_file(path=r"C:\Users\Christoph\Music\_Playlist\tmp2\Liste_1")
-
     # Main Menu
     parser = argparse.ArgumentParser(description="Organize and process audio files with ffmpeg.")
     parser.add_argument("-pa", "--path", default=".", dest="path", help="Path to the directory containing audio files (default: current directory).")
@@ -13,6 +11,10 @@ def main():
     parser_opt_norm = parser_opt.add_parser("norm", help="Normalize audio files.")
     parser_opt_org = parser_opt.add_parser("org", help="Organize and normalize audio files.")
     parser_opt_play = parser_opt.add_parser("play", help="Create a playlist file from audio files.")
+
+    # Options for the Normalize operation
+    parser_opt_norm.add_argument("-pr", "--prefix", default="", dest="prefix", help="Prefix for file names (default: None).")
+    parser_opt_norm.add_argument("-ex", "--exclusions", default="", dest="exclusions", help="Comma-separated list of patterns to exclude from normalization (default: None, e.g., 'foo,bar').")
 
     # Options for the Organize operation
     parser_opt_org.add_argument("-bz", "--batch_size", type=int, default=100, dest="batch_size", help="Number of files per batch (default: 100).")
@@ -31,14 +33,21 @@ def main():
     parser_opt_org_com_ln.add_argument("-tp, --true_peak", type=float, default=-1.5, dest="true_peak", help="True Peak in dB (default: -1.5)")
     parser_opt_org_com_ln.add_argument("-lr, --loudness_range", type=float, default=11.0, dest="loudness_range", help="Loudness Range in LU (default: 11.0)")
 
-    # Assign the functions to the subparsers
-    parser_opt_norm.set_defaults(func=Organizer.norm_files)
-    parser_opt_org.set_defaults(func=Organizer.organize_files)
-    parser_opt_play.set_defaults(func=Organizer.create_play_list_file)
-
     args = parser.parse_args()
-    print(args)
-    args.func(args)
+    print(f"Selected parameters: {args}")
+
+    # Call functions based on the selected operation
+    organizer = Organizer(args)
+    match args.operation:
+        case "norm":
+            organizer.norm_files()
+        case "org":
+            organizer.organize_files()
+        case "play":
+            organizer.create_play_list_file()
+        case _:
+            parser.print_help()
+            exit(1)
 
 if __name__ == '__main__':
     main()

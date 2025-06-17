@@ -4,33 +4,34 @@ import os
 class Converter:
     def __init__(self, args):
         # Convert to MP3 parameters
-        self.__convert_2_mp3 = args.convert_2_mp3
+        self.__convert_2_mp3 = getattr(args, 'convert_2_mp3', False)
         self.__bitrate = "320k"
         self.__format = "mp3"
         self.__acodec = "libmp3lame"
         # Dynamic range processing parameters
-        self.__dynamic_range_method = args.dynamic_range_method
-        self.__threshold = args.threshold
-        self.__ratio = args.ratio
-        self.__attack = args.attack
-        self.__release = args.release
+        self.__dynamic_range_method = getattr(args, 'dynamic_range_method', None)
+        self.__threshold = getattr(args, 'threshold', 0)
+        self.__ratio = getattr(args, 'ratio', 0)
+        self.__attack = getattr(args, 'attack', 0)
+        self.__release = getattr(args, 'release', 0)
         # Loudness normalization parameters
-        self.__lufs = args.lufs
-        self.__true_peak = args.true_peak
-        self.__loudness_range = args.loudness_range
+        self.__lufs = getattr(args, 'lufs', 0)
+        self.__true_peak = getattr(args, 'true_peak', 0)
+        self.__loudness_range = getattr(args, 'loudness_range', 0)
 
     def convert_audio(self, input_file):
         '''
         Applys dynamic range processing and optional converts to MP3.
         '''
-        output_file, ext = os.path.splitext(input_file)
-        if self.__convert_2_mp3:
-            output_file = output_file + ".mp3"
-        else:
-            output_file = output_file + ext
+        file, ext = os.path.splitext(input_file)
+        output_file = f"{file}.mp3" if self.__convert_2_mp3 else input_file
 
-        if self.__convert_2_mp3 and ext.lower() == '.mp3':
-            return input_file  # No conversion needed if already in MP3 format
+        if (self.__dynamic_range_method is None and (self.__convert_2_mp3 is False or (self.__convert_2_mp3 is True and output_file == input_file))):
+            return input_file # No conversion needed, return original file
+
+        if output_file == input_file:
+            os.rename(input_file, f"{file}_conv{ext}")
+            input_file = f"{file}_conv{ext}"
 
         try:
             match(self.__dynamic_range_method, self.__convert_2_mp3):
@@ -87,7 +88,8 @@ class Converter:
                         .run(overwrite_output=True, quiet=True)
                     )
                 case _, False:
-                    pass # No processing needed if no dynamic range method is specified. It's fine that this is handled here.
+                    pass # Leave the file unchanged if no conversion is needed, don't remove the original file
+            os.remove(input_file)
         except ffmpeg.Error as e:
                 print("❌ FFmpeg error:")
                 print(e.stderr.decode())
