@@ -125,19 +125,19 @@ class Organizer:
         '''
         Create a m3u file: that plays the tracks in the correct order in vlc or windows media player
         '''
-        files = [f for f in os.listdir(self.__path) if os.path.isfile(os.path.join(self.__path, f))]
+        files = [f for f in os.listdir(self.__path) if os.path.isfile(os.path.join(self.__path, f)) and not f.endswith('.m3u')]
         playlist_lines = ["#EXTM3U"] + sorted(files)
         playlist_path = os.path.join(self.__path, '_PlayListe.m3u')
 
         if (self.__try_run):
             print(f"Simulation: Create playlist file '{playlist_path}' with the following files:")
-            for file in playlist_lines:
+            for file in playlist_lines[1:]:
                 print(file)
         else:
             with open(playlist_path, 'w') as playlist:
                 for file in playlist_lines:
                     playlist.write(f"{file}\n")
-            print(f"Created playlist file '{playlist_path}' with {len(files) -1} files.")
+            print(f"Created playlist file '{playlist_path}' with {len(files)} files.")
 
     def norm_files(self):
         '''

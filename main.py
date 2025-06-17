@@ -5,7 +5,7 @@ def main():
     # Main Menu
     parser = argparse.ArgumentParser(description="Organize and process audio files with ffmpeg.")
     parser.add_argument("-pa", "--path", default=".", dest="path", help="Path to the directory containing audio files (default: current directory).")
-    parser.add_argument("-tr", "--try_run", action="store_true", help="Run in simulation mode without making changes.")
+    parser.add_argument("-tr", "--try-run", action="store_true", dest="try_run", help="Run in simulation mode without making changes.")
     parser_opt = parser.add_subparsers(dest="operation", title="Operation", help="Select audioediting operation.")
     # Operations for the Main Menu
     parser_opt_norm = parser_opt.add_parser("norm", help="Normalize audio files.")
@@ -17,9 +17,9 @@ def main():
     parser_opt_norm.add_argument("-ex", "--exclusions", default="", dest="exclusions", help="Comma-separated list of patterns to exclude from normalization (default: None, e.g., 'foo,bar').")
 
     # Options for the Organize operation
-    parser_opt_org.add_argument("-bz", "--batch_size", type=int, default=100, dest="batch_size", help="Number of files per batch (default: 100).")
-    parser_opt_org.add_argument("-rd", "--random_dist", action="store_true", help="Distribute files randomly by artist (default: Off).")
-    parser_opt_org.add_argument("-c2", "--convert_2_mp3", action="store_true", help="Convert files to MP3 format (default: Off).")
+    parser_opt_org.add_argument("-bz", "--batch-size", type=int, default=100, dest="batch_size", help="Number of files per batch (default: 100).")
+    parser_opt_org.add_argument("-rd", "--random-dist", action="store_true", dest="random_dist", help="Distribute files randomly by artist (default: Off).")
+    parser_opt_org.add_argument("-c2", "--convert-2-mp3", action="store_true", dest="convert_2_mp3", help="Convert files to MP3 format (default: Off).")
     # Dynamic range processing options
     parser_opt_org_com = parser_opt_org.add_subparsers(dest="dynamic_range_method", title="Dynamic compression method", help="Select dynamic range processing method (default: None).")
     parser_opt_org_com_dc = parser_opt_org_com.add_parser("dc", help="Dynamic compression (acompressor)")
@@ -30,8 +30,8 @@ def main():
     # Loudness normalization options
     parser_opt_org_com_ln = parser_opt_org_com.add_parser("ln", help="Loudness normalization (loudnorm)")
     parser_opt_org_com_ln.add_argument("-lu, --lufs", type=float, default=-16.0, dest="lufs", help="Loudness in LUFS (default: -16.0)")
-    parser_opt_org_com_ln.add_argument("-tp, --true_peak", type=float, default=-1.5, dest="true_peak", help="True Peak in dB (default: -1.5)")
-    parser_opt_org_com_ln.add_argument("-lr, --loudness_range", type=float, default=11.0, dest="loudness_range", help="Loudness Range in LU (default: 11.0)")
+    parser_opt_org_com_ln.add_argument("-tp, --true-peak", type=float, default=-1.5, dest="true_peak", help="True Peak in dB (default: -1.5)")
+    parser_opt_org_com_ln.add_argument("-lr, --loudness-range", type=float, default=11.0, dest="loudness_range", help="Loudness Range in LU (default: 11.0)")
 
     args = parser.parse_args()
     print(f"Selected parameters: {args}")
