@@ -1,0 +1,5 @@
+- Komplette Überarbeitung (alle Datei durchschauen)
+- Readme besser gestalten (nicht git Option raus nehmen)
+- FORMAT_OPTIONS in TOML Datei
+- Standardwerte für dc oder ln in einer Quelle nicht doppelt in main und converter pflegen
+- Die option --path ist etwas überflüssig
